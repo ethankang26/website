@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState, useRef } from "react"
 import { motion } from "framer-motion"
-import { Upload, File, X, CheckCircle } from "lucide-react"
+import { Upload, File, X, CheckCircle, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface DocumentUploaderProps {
@@ -16,6 +16,7 @@ export function DocumentUploader({ onFilesUploaded }: DocumentUploaderProps) {
   const [files, setFiles] = useState<File[]>([])
   const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({})
   const [uploadComplete, setUploadComplete] = useState<Record<string, boolean>>({})
+  const [invalidFiles, setInvalidFiles] = useState<string[]>([])
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -43,10 +44,19 @@ export function DocumentUploader({ onFilesUploaded }: DocumentUploaderProps) {
     }
   }
 
+  const isValidFileType = (file: File) => {
+    return file.type === "application/pdf" || file.type === "image/jpeg" || file.type === "image/png"
+  }
+
   const handleFiles = (newFiles: File[]) => {
-    const validFiles = newFiles.filter(
-      (file) => file.type === "application/pdf" || file.type === "image/jpeg" || file.type === "image/png",
-    )
+    const validFiles = newFiles.filter(isValidFileType)
+    const invalidFileNames = newFiles.filter(file => !isValidFileType(file)).map(file => file.name)
+    
+    if (invalidFileNames.length > 0) {
+      setInvalidFiles(invalidFileNames)
+      // Clear invalid files warning after 5 seconds
+      setTimeout(() => setInvalidFiles([]), 5000)
+    }
 
     setFiles((prev) => [...prev, ...validFiles])
 
@@ -148,6 +158,23 @@ export function DocumentUploader({ onFilesUploaded }: DocumentUploaderProps) {
           Browse Files
         </Button>
       </motion.div>
+
+      {invalidFiles.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-2"
+        >
+          <AlertCircle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
+          <div>
+            <p className="text-red-500 font-medium text-sm">Invalid file type{invalidFiles.length > 1 ? 's' : ''}</p>
+            <p className="text-red-400 text-sm mt-1">
+              {invalidFiles.join(', ')} {invalidFiles.length > 1 ? 'are' : 'is'} not supported. Please use PDF, JPG, or PNG files only.
+            </p>
+          </div>
+        </motion.div>
+      )}
 
       {files.length > 0 && (
         <div className="mt-6 space-y-3">

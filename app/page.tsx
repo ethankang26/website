@@ -45,19 +45,19 @@ export default function Home() {
           <nav className="hidden md:flex items-center gap-6">
             <button 
               onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-              className="text-gray-600 hover:text-gray-900 font-medium relative group cursor-pointer"
+              className="text-gray-600 hover:text-gray-900 font-medium relative group cursor-pointer text-base"
             >
               Features
               <span className="absolute inset-x-0 bottom-0 h-0.5 bg-indigo-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-200"></span>
             </button>
             <button
               onClick={() => document.getElementById('upload-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-              className="text-gray-600 hover:text-gray-900 font-medium relative group cursor-pointer"
+              className="text-gray-600 hover:text-gray-900 font-medium relative group cursor-pointer text-base"
             >
               Upload
               <span className="absolute inset-x-0 bottom-0 h-0.5 bg-indigo-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-200"></span>
             </button>
-            <Button variant="outline" className="ml-2 transition-all duration-200 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 bg-white font-medium text-gray-800">
+            <Button variant="outline" className="ml-2 transition-all duration-200 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 bg-white font-medium text-gray-800 text-base h-9 px-4">
               Contact Us
             </Button>
           </nav>
@@ -179,47 +179,66 @@ export default function Home() {
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="bg-gradient-to-br from-indigo-900 to-indigo-800 rounded-3xl overflow-hidden shadow-2xl"
+            className="bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-900 rounded-3xl overflow-hidden shadow-2xl"
           >
-            <div className="p-8 md:p-12">
-              <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="relative p-8 md:p-12">
+              {/* Background decoration */}
+              <div className="absolute top-0 right-0 -mt-12 -mr-12 w-64 h-64 bg-indigo-600 rounded-full opacity-20 blur-3xl"></div>
+              <div className="absolute bottom-0 left-0 -mb-12 -ml-12 w-64 h-64 bg-purple-600 rounded-full opacity-20 blur-3xl"></div>
+              
+              <div className="relative grid md:grid-cols-2 gap-12 items-center">
                 <div>
-                  <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Upload Your Documents</h2>
-                  <p className="text-gray-300 mb-8">
+                  <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight">
+                    Upload Your Documents
+                  </h2>
+                  <p className="text-indigo-100 text-lg mb-8 leading-relaxed">
                     Drag and drop your mortgage documents or browse your files. We support PDF, JPG, and PNG formats.
                   </p>
 
-                  <div className="space-y-4">
-                    {["Loan Application", "Income Verification", "Property Documents", "Bank Statements"].map(
-                      (doc, i) => (
-                        <div key={i} className="flex items-center gap-3">
-                          <div className="w-6 h-6 rounded-full bg-indigo-700 flex items-center justify-center text-white text-sm">
-                            {i + 1}
-                          </div>
-                          <span className="text-gray-200">{doc}</span>
+                  <div className="space-y-6">
+                    {[
+                      { title: "Loan Application", desc: "Primary mortgage application form" },
+                      { title: "Income Verification", desc: "Pay stubs, W-2s, or tax returns" },
+                      { title: "Property Documents", desc: "Purchase agreement, appraisal" },
+                      { title: "Bank Statements", desc: "Last 2-3 months of statements" }
+                    ].map((doc, i) => (
+                      <div key={i} className="flex items-start gap-4 bg-indigo-800/30 rounded-xl p-4 backdrop-blur-sm">
+                        <div className="w-8 h-8 rounded-full bg-indigo-500/30 flex items-center justify-center text-white font-medium shrink-0">
+                          {i + 1}
                         </div>
-                      ),
-                    )}
+                        <div>
+                          <h3 className="text-white font-medium mb-1">{doc.title}</h3>
+                          <p className="text-indigo-200 text-sm">{doc.desc}</p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                <div>
-                  <DocumentUploader onFilesUploaded={handleFilesUploaded} />
+                <div className="relative">
+                  <div className="absolute inset-0 bg-white/5 rounded-2xl -m-2 backdrop-blur-sm"></div>
+                  <div className="relative">
+                    <DocumentUploader onFilesUploaded={handleFilesUploaded} />
+                  </div>
                 </div>
               </div>
 
               {uploadedFiles.length > 0 && (
-                <div className="mt-8 flex justify-center">
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-12 flex justify-center"
+                >
                   <Link href="/dashboard">
                     <Button
                       size="lg"
-                      className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full px-8 h-14 text-lg"
+                      className="bg-white hover:bg-indigo-50 text-indigo-900 rounded-full px-8 h-14 text-lg font-medium shadow-lg shadow-indigo-900/20 transition-all duration-200"
                       onClick={startProcessing}
                     >
                       Start Processing <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </Link>
-                </div>
+                </motion.div>
               )}
             </div>
           </motion.div>
