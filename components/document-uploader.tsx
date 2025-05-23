@@ -17,6 +17,8 @@ export function DocumentUploader({ onFilesUploaded }: DocumentUploaderProps) {
   const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({})
   const [uploadComplete, setUploadComplete] = useState<Record<string, boolean>>({})
   const [invalidFiles, setInvalidFiles] = useState<string[]>([])
+  const [showMaxFilesWarning, setShowMaxFilesWarning] = useState(false)
+  const MAX_FILES = 10
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -49,12 +51,19 @@ export function DocumentUploader({ onFilesUploaded }: DocumentUploaderProps) {
   }
 
   const handleFiles = (newFiles: File[]) => {
+    // Check if adding new files would exceed the limit
+    if (files.length + newFiles.length > MAX_FILES) {
+      setShowMaxFilesWarning(true)
+      setTimeout(() => setShowMaxFilesWarning(false), 5000)
+      // Only take the first N files that would fit under the limit
+      newFiles = newFiles.slice(0, MAX_FILES - files.length)
+    }
+
     const validFiles = newFiles.filter(isValidFileType)
     const invalidFileNames = newFiles.filter(file => !isValidFileType(file)).map(file => file.name)
     
     if (invalidFileNames.length > 0) {
       setInvalidFiles(invalidFileNames)
-      // Clear invalid files warning after 5 seconds
       setTimeout(() => setInvalidFiles([]), 5000)
     }
 
@@ -148,16 +157,34 @@ export function DocumentUploader({ onFilesUploaded }: DocumentUploaderProps) {
 
         <Upload className="h-10 w-10 text-gray-400 mb-4" />
         <p className="text-gray-300 text-center mb-2">Drag and drop your documents here</p>
-        <p className="text-gray-500 text-sm text-center mb-4">Supports PDF, JPG, PNG</p>
+        <p className="text-gray-500 text-sm text-center mb-4">Supports PDF, JPG, PNG (Max {MAX_FILES} files)</p>
 
         <Button
           variant="outline"
           onClick={() => fileInputRef.current?.click()}
           className="border-gray-600 text-gray-300 hover:bg-gray-700"
+          disabled={files.length >= MAX_FILES}
         >
           Browse Files
         </Button>
       </motion.div>
+
+      {showMaxFilesWarning && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg flex items-start gap-2"
+        >
+          <AlertCircle className="h-5 w-5 text-yellow-500 shrink-0 mt-0.5" />
+          <div>
+            <p className="text-yellow-500 font-medium text-sm">Maximum files reached</p>
+            <p className="text-yellow-400 text-sm mt-1">
+              You can upload a maximum of {MAX_FILES} files. Some files were not added.
+            </p>
+          </div>
+        </motion.div>
+      )}
 
       {invalidFiles.length > 0 && (
         <motion.div

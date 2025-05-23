@@ -80,7 +80,7 @@ export default function Home() {
           <div className="flex justify-center mb-6">
             <UnreppedLogo className="h-16 w-auto" />
           </div>
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 leading-tight py-1">
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-black via-gray-900 to-black leading-tight py-1">
             Mortgage Automation
           </h1>
           <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-2xl mx-auto">
@@ -250,7 +250,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">
-              <UnreppedLogo className="h-6 w-auto text-white" />
+              <UnreppedLogo className="h-8 w-auto text-white" />
               <p className="mt-1 text-gray-400">Revolutionizing mortgage applications</p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
