@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Placeholder Videos</title>
+    <style>
+        body { background: #000; display: flex; flex-wrap: wrap; gap: 20px; padding: 20px; }
+        canvas { border: 1px solid #333; }
+    </style>
+</head>
+<body>
+    <script>
+        const videos = [
+            { name: 'document-analysis', colors: ['#3B82F6', '#4F46E5'] },
+            { name: 'income-verify', colors: ['#A855F7', '#EC4899'] },
+            { name: 'credit-analysis', colors: ['#10B981', '#14B8A6'] },
+            { name: 'property-value', colors: ['#F97316', '#F59E0B'] },
+            { name: 'lender-match', colors: ['#E11D48', '#DC2626'] },
+            { name: 'rate-compare', colors: ['#06B6D4', '#0EA5E9'] },
+            { name: 'risk-assess', colors: ['#8B5CF6', '#A855F7'] },
+            { name: 'doc-verify', colors: ['#D946EF', '#EC4899'] },
+            { name: 'app-progress', colors: ['#84CC16', '#22C55E'] },
+            { name: 'final-approve', colors: ['#4F46E5', '#3B82F6'] }
+        ];
+
+        videos.forEach(video => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1280;
+            canvas.height = 720;
+            canvas.style.width = '320px';
+            canvas.style.height = '180px';
+            document.body.appendChild(canvas);
+
+            const ctx = canvas.getContext('2d');
+            const stream = canvas.captureStream(30);
+            const recorder = new MediaRecorder(stream, {
+                mimeType: 'video/webm;codecs=vp9',
+                videoBitsPerSecond: 2500000
+            });
+
+            const chunks = [];
+            recorder.ondataavailable = e => chunks.push(e.data);
+            recorder.onstop = () => {
+                const blob = new Blob(chunks, { type: 'video/webm' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${video.name}.webm`;
+                a.click();
+            };
+
+            let frame = 0;
+            function draw() {
+                frame++;
+                const gradient = ctx.createLinearGradient(
+                    Math.sin(frame / 100) * canvas.width,
+                    0,
+                    Math.cos(frame / 100) * canvas.width,
+                    canvas.height
+                );
+                gradient.addColorStop(0, video.colors[0]);
+                gradient.addColorStop(1, video.colors[1]);
+                
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Add some animated elements
+                ctx.fillStyle = 'rgba(255,255,255,0.1)';
+                for(let i = 0; i < 5; i++) {
+                    const x = Math.sin(frame / 50 + i) * canvas.width/2 + canvas.width/2;
+                    const y = Math.cos(frame / 70 + i) * canvas.height/2 + canvas.height/2;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 50 + Math.sin(frame / 30) * 20, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                if(frame < 180) { // 6 seconds at 30fps
+                    requestAnimationFrame(draw);
+                } else {
+                    recorder.stop();
+                }
+            }
+
+            recorder.start();
+            draw();
+        });
+    </script>
+</body>
+</html> 

@@ -6,6 +6,7 @@ import { ArrowRight, CheckCircle, Shield, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DocumentUploader } from "@/components/document-uploader"
 import { UnreppedLogo } from "@/components/unrepped-logo"
+import { AIShowcase } from "@/components/ai-showcase"
 import Link from "next/link"
 
 export default function Home() {
@@ -170,6 +171,9 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* AI Showcase Section */}
+      <AIShowcase />
 
       {/* Upload Section */}
       <div id="upload-section" className="py-24 bg-white">
