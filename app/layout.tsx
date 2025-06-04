@@ -4,7 +4,7 @@ import './globals.css'
 export const metadata: Metadata = {
   title: 'Unrepped',
   description: 'Created with v0',
-  generator: 'v0.dev',
+  generator: 'unrepped.dev',
 }
 
 export default function RootLayout({
